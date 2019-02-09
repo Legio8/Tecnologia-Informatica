@@ -1,0 +1,38 @@
+[
+  {
+    "Nombre": "Francisco",
+    "clave": 1
+  },
+  {
+    "Nombre": "Giovany",
+    "clave": 2
+  },
+  {
+    "Nombre": "Adriana",
+    "clave": 3
+  },
+  {
+    "Nombre": "Valeria",
+    "clave": 4
+  },
+  {
+    "Nombre": "Diana",
+    "clave": 5
+  },
+  {
+    "Nombre": "Carlos",
+    "clave": "6"
+  },
+  {
+    "Nombre": "Jorge",
+    "clave": "7"
+  },
+  {
+    "Nombre": "Paola",
+    "clave": "8"
+  },
+  {
+    "Nombre": "Sharon",
+    "clave": "9"
+  }
+]
