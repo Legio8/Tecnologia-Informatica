@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <title>Agrega Alumno</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+  </head>
+  <body>
+    <center>
+        <table bgcolor="white" cellpadding="12" border="1">
+            <tr><td colspan="2"><center><h1><i><b>Añadir Alumno</b></i></h1></center></td></tr>
+            <tr><td><h1><i><b>Nombre del Alumno:</b></i></h1></td><td><input id="nombre" type="text"></td></tr>
+            <tr><td><center><h1><i><b>Clave:</b></i></h1></center></td><td><input id="clave" type="texto"></td></tr>
+            <tr><td colspan="2"><center><input type="button" id="act" value="Añadir"></center></td></tr>
+        </table>
+    </center>
+  </body>
+
+  <script src="app.js">
+    //cunado el documento este listo y todos los objetos 
+    $(document).ready( function(){
+        //Programacion del boton act para obtener datos del input.
+        $("#act").on("click", function(event){
+            console.log(event);
+            var alumno = { }; //Creacion de objeto con la info necesaria.
+            alumno.nombre = $("#nombre").val();
+            alumno.clave = $("#clave").val();
+            //Invocamos a la funcion para llamadas post y mandamos el objeto.
+            sendPOSTRequest(alumno);
+        });
+    });
+    function sendPOSTRequest(body_object){
+        //Llamada post al backend usando jquery.
+        console.log("Objeto enviado por POST: " );
+        console.log(body_object);
+    }
+  </script>
+</html>
