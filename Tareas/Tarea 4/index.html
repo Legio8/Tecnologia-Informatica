@@ -19,14 +19,14 @@
     </center>
   </body>
 
-  <script src="app.js">
+  <script>
     //cunado el documento este listo y todos los objetos 
     $(document).ready( function(){
         //Programacion del boton act para obtener datos del input.
         $("#act").on("click", function(event){
             console.log(event);
             var alumno = { }; //Creacion de objeto con la info necesaria.
-            alumno.nombre = $("#nombre").val();
+            alumno.Nombre = $("#nombre").val();
             alumno.clave = $("#clave").val();
             //Invocamos a la funcion para llamadas post y mandamos el objeto.
             sendPOSTRequest(alumno);
@@ -36,6 +36,9 @@
         //Llamada post al backend usando jquery.
         console.log("Objeto enviado por POST: " );
         console.log(body_object);
+        $.post("http://localhost:3000/agreganuevo",body_object,function(){
+            alert("Agregado");
+        },"json");
     }
   </script>
 </html>

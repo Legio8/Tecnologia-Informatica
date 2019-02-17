@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser =  require ('body-parser');
 const app = express();
 var fs = require("fs");
 
@@ -76,8 +77,24 @@ var db = {
       msg = "La clave " + clav + " ya existe por favor introduzca otra";
     }
     return msg;
+  },
+
+  guardaNuevo()
+  {
+    var datos = JSON.stringify(this.alumnos, null, 2);
+    fs.writeFile('alumnos.json', datos, (err) => {
+      if (err) throw err;
+      console.log('Se ha agregado el alumno.');
+    });
   }
 }
+
+app.use(bodyParser.urlencoded({ extended: false}))
+app.use(bodyParser.json())
+
+app.get('/', (req,res) => {
+  res.sendFile("index.html",{ root: "."});
+});
 
 app.get('/alumnos',(req,res) => {
   db.initDB();
@@ -105,6 +122,15 @@ app.post('/alumnos/agrega/:nombre/:clave',(req,res) => {
   var nombre = req.params.nombre;
   var mensaje = db.añadeAlumno(nombre,clave);
   res.json(mensaje);
+});
+
+app.post('/agreganuevo',(req,res) => {
+  db.initDB();
+  var alumno = req.body;
+  console.log(alumno);
+  db.alumnos.push(alumno);  
+  db.guardaNuevo();
+  res.json({"status":"OK!"});
 });
 
 app.listen(3000, () => {
