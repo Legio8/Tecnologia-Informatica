@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <title>Agrega Alumno</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+  </head>
+  <body>
+    <div>
+      <center>
+          <table bgcolor="white" cellpadding="12" border="1">
+              <tr><td colspan="2"><center><h1><i><b>Añadir Alumno</b></i></h1></center></td></tr>
+              <tr><td><h1><i><b>Nombre del Alumno:</b></i></h1></td><td><input id="nombre" type="text"></td></tr>
+              <tr><td><center><h1><i><b>Clave:</b></i></h1></center></td><td><input id="clave" type="texto"></td></tr>
+              <tr><td colspan="2"><center><input type="button" id="act" value="Añadir"></center></td></tr>
+          </table>
+      </center>
+
+      <center>
+          <table bgcolor="white" cellpadding="12" border="1">
+              <tr><td colspan="2"><center><h1><i><b>Eliminar Alumno</b></i></h1></center></td></tr>
+              <tr><td><h1><i><b>Nombre del Alumno:</b></i></h1></td><td><input id="nombreEl" type="text"></td></tr>
+              <tr><td><center><h1><i><b>Clave:</b></i></h1></center></td><td><input id="claveEl" type="texto"></td></tr>
+              <tr><td colspan="2"><center><input type="button" id="eliminar" value="Eliminar"></center></td></tr>
+          </table>
+      </center>
+
+      <div>
+        <h4> Lista de Alumnos </h4>
+        <ul id="lista-alumnos" class="list-group">
+
+        </ul>
+      </div>
+    </div>
+
+  </body>
+
+  <script>
+    //cunado el documento este listo y todos los objetos 
+    $(document).ready( function(){
+
+        //Una vez que este listo el documento obtendremos la lista de alumnos y la mostraremos.
+        getAlumnos();
+
+        //Programacion del boton act para obtener datos del input.
+        $("#act").on("click", function(event){
+            console.log(event);
+            var alumno = { }; //Creacion de objeto con la info necesaria.
+            alumno.Nombre = $("#nombre").val();
+            alumno.clave = $("#clave").val();
+            //Invocamos a la funcion para llamadas post y mandamos el objeto.
+            sendPOSTRequest(alumno);
+            //Se limpian los input
+            $("#nombre").val('');
+            $("#clave").val('');
+        });
+
+        $("#eliminar").on("click", function(event){
+            console.log(event);
+            var alumno = { }; //Creacion de objeto con la info necesaria.
+            alumno.Nombre = $("#nombreEl").val();
+            alumno.clave = $("#claveEl").val();
+            //Invocamos a la funcion para llamadas post y mandamos el objeto.
+            eliminaxPost(alumno);
+            //Se limpian los input
+            $("#nombreEl").val('');
+            $("#claveEl").val('');
+        });
+    });
+
+    function getAlumnos(){
+        //LLamada GET para obtener los alumnos
+        //Se muestra resultado con una lista en HTML
+        //Se utiliza un ciclo for y se genera el codigo HTML
+        //Usando Jquery se coloca el HTML en la lista.
+        $.get("http://localhost:3000/alumnos", function(data){
+            var listHTML = "";
+            console.log(data);
+            data.forEach(alumno => {
+                listHTML += "<li class='list-group-item'> Clave : " + alumno.clave + " | Nombre: " + alumno.Nombre + "</li>";
+            });
+            $("#lista-alumnos").html(listHTML);
+        });
+    }
+
+    function eliminaxPost(body_object){
+      console.log("Objeto enviado por POST: " );
+      console.log(body_object);
+      $.post("http://localhost:3000/elimina",body_object,function(){
+            alert("Eliminado");
+            getAlumnos();
+        },"json");
+
+    }
+
+    function sendPOSTRequest(body_object){
+        //Llamada post al backend usando jquery.
+        console.log("Objeto enviado por POST: " );
+        console.log(body_object);
+        $.post("http://localhost:3000/agreganuevo",body_object,function(){
+            alert("Agregado");
+            getAlumnos();
+        },"json");
+
+    }
+
+   
+  </script>
+</html>
