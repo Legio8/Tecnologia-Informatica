@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Pagina de prueba</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css"> 
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" /> -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+        <nav class="navbar navbar-light bg-light">
+        <a class="navbar-brand" href="#">
+            <img src="img/caret.jpg" width="30" height="30" class="d-inline-block align-top" alt="">
+            Tecnolog&iacute;as Inform&aacute;ticas
+        </a>
+        </nav>
+    <div class="container">
+    <h3 class="display-3">Ejercicio Node, Express, Jquery</h3>
+    <form action="">
+        <input type="text" placeholder="Nombre" name="nombre" id="nombre">
+        <input type="text" placeholder="Clave" name="clave" id="clave">
+        <button id="act" type="button"> Agregar </button>
+    </form>
+<br>
+<div class="clear"></div>
+    <div>
+        <h4> Lista de Alumnos </h4>
+        <!-- <ul id="lista-alumnos" class="list-group">
+
+        </ul> -->
+        <div class="panel-group lista-alumnos" id="accordion">
+
+        </div>
+    </div>
+
+</div>
+</body>
+
+<script>
+    //cunado el documento este listo y todos los objetos 
+    $(document).ready( function(){
+
+        //Una vez que este listo el documento obtendremos la lista de alumnos y la mostraremos.
+        getAlumnos();
+
+        //Programacion del boton act para obtener datos del input.
+        $("#act").on("click", function(event){
+            console.log(event);
+            var alumno = { }; //Creacion de objeto con la info necesaria.
+            alumno.nombre = $("#nombre").val();
+            alumno.clave = $("#clave").val();
+            //Invocamos a la funcion para llamadas post y mandamos el obeto.
+            sendPOSTRequest(alumno);
+            $("#nombre").val("");
+            $("#clave").val("");
+        });
+
+    });
+
+    function getAlumnos(){
+        //LLamada GET para obtener los alumnos
+        //Se muestra resultado con una lista en HTML
+        //Se utiliza un ciclo for y se genera el codigo HTML
+        //Usando Jquery se coloca el HTML en la lista.
+        $.get("http://localhost:3000/alumnos", function(data){
+            var listHTML = "";
+            console.log(data);
+            var i=1;
+            data.forEach(alumno => {
+                /*<i class='material-icons'></i>*/
+                listHTML += "<div class='panel panel-default'>" + 
+                "<div class='panel-heading'>"+" <button type='button' class='delete btn btn-danger btn-sm' data-clave='"+ alumno.clave +"'>Borrar</button> " + 
+                " | Clave : " + alumno.clave + " | Nombre: " + alumno.nombre+"<h2 class='panel-title' style='float: right;'>"+"<a data-toggle='collapse' data-parent='#accordion' href='#collapse"+i+"'>Editar</a></h2></div>"+"<div id='collapse"+i+"' class='panel-collapse collapse'>"+
+                "<div class='panel-body'><form action=''>Nombre <input type='text' name='nombreEd' id='nombreEd"+i+"' value='"+alumno.nombre+"'>  Clave <input type='text'  name='claveEd' id='claveEd"+i+"' value='" + alumno.clave + "'><button data-id='"+i+"' data-clave2='"+ alumno.clave +"' class='editar' type='button'> Editar </button></form></div>"+"</div>";
+                i++;
+            });
+            $(".lista-alumnos").html(listHTML);
+//style='float: right;'
+
+
+             //Programacion para los botones delete
+             $(".delete").on("click", (event) =>{
+                console.log("Button delete");
+                console.log(event.target);
+                console.log(event.target.dataset["clave"]);
+                sendDELETERequest({ "clave" : event.target.dataset["clave"] });
+            });
+
+            $(".editar").on("click", (event) =>{
+                console.log("Editando");
+                console.log(event.target);
+                sendPUTRequest({ "nombre" : $("#nombreEd"+event.target.dataset["id"]).val(), "clave" : $("#claveEd"+event.target.dataset["id"]).val(), "clave2" : event.target.dataset["clave2"]});
+            });
+           
+
+            
+
+        });
+    }
+
+    function sendPOSTRequest(body_object){
+        //Llamada post al backend usando jquery.
+        
+        $.post("http://localhost:3000/alumnos", body_object , 
+        function(){
+            alert("Alumno guardado.");
+            //Actualizamos la lista html para ver los cambios.
+            getAlumnos();
+        });
+    }
+
+    function sendDELETERequest(body_object) {
+        //Llamada delete al backend por medio de jquery
+
+        $.ajax({
+            method: "DELETE",
+            url: "http://localhost:3000/alumnos",
+            data: body_object
+            })
+            .done(function( msg ) {
+                alert( "Alumno eliminado: " + body_object.clave );
+            })
+            .fail(function(msg){
+                alert("Error al eliminar alumno: " + body_object.clave)
+            }); 
+            getAlumnos();
+    }
+    function sendPUTRequest(body_object) {
+        //Llamada delete al backend por medio de jquery
+
+        $.ajax({
+            method: "PUT",
+            url: "http://localhost:3000/alumnos",
+            data: body_object
+            })
+            .done(function( msg ) {
+                alert( "Alumno editado, clave nueva: " + body_object.clave+" Nuevo Nombre: "+body_object.nombre );
+            })
+            .fail(function(msg){
+                alert("Error al editar alumno: " + body_object.clave2)
+            }); 
+            getAlumnos();
+    }
+
+</script>
+</html>
