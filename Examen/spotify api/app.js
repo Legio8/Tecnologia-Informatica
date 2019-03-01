@@ -6,9 +6,9 @@ var app = express();
 
 var querystring = require('querystring');
 
-var client_id = ''; // Your client id
-var client_secret = ''; // Your secret
-var redirect_uri = ''; // Your redirect uri
+var client_id = ''; // Tu client id
+var client_secret = ''; // Tu client_secret
+var redirect_uri = ''; // Tu redirect uri
 
 
 const archivos = require('fs');
