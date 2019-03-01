@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Spotify API</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">  -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h4>Busca un artista</h4>
+        <p>Escribe el nombre de un artista y da click en "Buscar".</p>
+        <form id="search-form" autocomplete="off">
+            <input type="text" id="artistaNom" value="" class="form-control " placeholder="Nombre del artista"/>
+            <input type="button" id="busca" style='float: right;' class="btn btn-primary" value="Buscar" />
+        </form>
+        <br>
+        <br>
+        <br>
+        <div>
+            <h4> Informacion del artista segun Spotify:</h4>
+            <br>
+            <div class="infoArtista" id="infoArtista">
+    
+            </div>
+        </div>
+    </div>
+    
+</body>
+
+<script>
+    //cunado el documento este listo y todos los objetos 
+    $(document).ready( function(){
+        getInfo();
+        //Una vez que este listo el documento obtendremos la lista de alumnos y la mostraremos.
+        $.get("http://localhost:3000/inicia", function(data){
+            $("#busca").on("click", function(event){
+                var artista = { }; //Creacion de objeto con la info necesaria.
+                artista.nombre = $("#artistaNom").val();
+                artista.token = data['access_token'];;
+                //Invocamos a la funcion para llamadas post y mandamos el obeto.
+                sendPOSTRequest(artista);
+                $("#artistaNom").val("");
+            });
+
+        });
+    });
+
+    function sendPOSTRequest(body_object){
+        //Llamada post al backend usando jquery.
+        $.post("http://localhost:3000/inicia", body_object , 
+        function(){
+            getInfo();
+        });
+        
+    }
+
+    function getInfo(){
+        //LLamada GET para obtener los alumnos
+        //Se muestra resultado con una lista en HTML
+        //Se utiliza un ciclo for y se genera el codigo HTML
+        //Usando Jquery se coloca el HTML en la lista.
+        $.get("http://localhost:3000/info", function(data){
+            var listHTML = "";
+            var aux=data.artists.items[0].genres;
+            var generos="| ";
+            aux.forEach(genero => {
+                generos = generos + genero + " | ";
+            });
+            listHTML ="<h3><a target='_blank' href='"+data.artists.items[0].external_urls.spotify+"'>"+data.artists.items[0].name+"</a></h3>"+"<p>Seguidores: "+data.artists.items[0].followers.total+"</p>"+"<p>Generos: "+generos+"</p>"+"<p>Popularidad: "+data.artists.items[0].popularity+"</p>"+"<p>La popularidad se basa de 0 a 100 y se calcula por la popularidad de las canciones del artista</p>"+"<img src='"+data.artists.items[0].images[0].url+ "' alt='Imagen del artista' style='width:"+data.artists.items[0].images[0].width+";height:"+data.artists.items[0].images[0].height+";'>" 
+            $(".infoArtista").html(listHTML);
+            });
+            //"<img src='"+data.artists.items[0].images[0].url+ "' alt='Imagen del artista' style='width:"+data.artists.items[0].images[0].width+";height:"+data.artists.items[0].images[0].height+";'>"
+    }
+
+    
+</script>
+</html>
