@@ -1,20 +1,16 @@
 const express =  require("express");
 var request = require('request'); // "Request" library
 const bodyParser = require("body-parser");
-var cors = require('cors')
 var app = express();
 
-var querystring = require('querystring');
 
-var client_id = ''; // Tu client id
-var client_secret = ''; // Tu client_secret
-var redirect_uri = ''; // Tu redirect uri
-
+var client_id = ''; // Your client id
+var client_secret = ''; // Your secret
+var redirect_uri = ''; // Your redirect uri
 
 const archivos = require('fs');
 
-
-
+//OPciones para la conexion que nos regresara el token
   var authOptions = {
     url: 'https://accounts.spotify.com/api/token',
     form: {
@@ -35,6 +31,7 @@ var db = {
       this.infoArt = JSON.parse(contents);
   },
 
+  //Se guarda la informacion que nos regresa la api
   guardaInfo : function(infoNueva){
     this.infoArt = infoNueva;
     archivos.writeFileSync('info.json', JSON.stringify(this.infoArt),
@@ -44,11 +41,16 @@ var db = {
               console.log(error);
           }
       });
-  }
+  },
   
 }
+var token = {
+  guardaToken : function(token)
+  {
+    this.tokenFinal = token;
+  }
+}
 
-app.use(cors());
 app.use(express.static('assets'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -57,34 +59,27 @@ app.get('/',function(req,res){
   res.sendFile("index.html",{ root: "."});
 });
 
-// app.get('/inicia', function(req, res) {
-//   request.post(authOptions, function(error, response, body) {
-//     if (!error && response.statusCode === 200) {
-//       var access_token = body.access_token;
-//       res.send({
-//         'access_token': access_token
-//       });
-//     }
-//   });
-// });
 
+//Se manda la informacion leida del archivo
 app.get('/info',function(req,res){
   db.initDB();
   console.log(db.infoArt);
   res.send(db.infoArt);
 });
 
+//Ruta donde se inicia para que nos de el token la api
 app.route("/inicia")
   .get( (req, res) => {
     request.post(authOptions, function(error, response, body) {
       if (!error && response.statusCode === 200) {
         var access_token = body.access_token;
+        token.guardaToken(access_token);
         res.send({
-          'access_token': access_token
+          'status': '¡Token Generado!'//'access_token': access_token
         });
       }
     });
-  })
+  })//Metodo post que recibe el nombre del artista a buscar y se hace la consulta a la api sobre el artista
   .post((req,res)=> {
     var artista=req.body;
     console.log(artista);
@@ -96,7 +91,7 @@ app.route("/inicia")
         limit: 1
       },
       headers: {
-        'Authorization': 'Bearer ' + artista.token
+        'Authorization': 'Bearer ' + token.tokenFinal
       },
       json: true
     };

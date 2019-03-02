@@ -43,12 +43,10 @@
             $("#busca").on("click", function(event){
                 var artista = { }; //Creacion de objeto con la info necesaria.
                 artista.nombre = $("#artistaNom").val();
-                artista.token = data['access_token'];;
                 //Invocamos a la funcion para llamadas post y mandamos el obeto.
                 sendPOSTRequest(artista);
                 $("#artistaNom").val("");
             });
-
         });
     });
 
